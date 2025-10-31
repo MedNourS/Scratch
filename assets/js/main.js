@@ -65,13 +65,21 @@ $(function () {
         }
 
         if (isGravity) {
-            if (keys.space) vy -= (1 / 2) * gravity;
-            vy += 1 / gravity;
+            if (top + 403.5 < $(window).innerHeight()) {
+                vy += (1 / (1 * gravity));
+            } else {
+                vy = 0;
+                if (keys.space) vy -= 25 / gravity;
+            }
 
-            console.log(vy);
-        }
+            if (keys.a) vx -= acceleration;
+            if (keys.d) vx += acceleration;
 
-        if (isAccelerationBased) {
+            vx *= friction;
+
+            top += vy;
+            left += vx;
+        } else if (isAccelerationBased) {
             if (keys.w) vy -= acceleration;
             if (keys.s) vy += acceleration;
             if (keys.a) vx -= acceleration;
