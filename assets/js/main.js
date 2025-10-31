@@ -2,14 +2,36 @@
 
 let isKeyBased = true;
 let isAccelerationBased = true;
-let isGravity = false;
+let isGravityBased = false;
 
 $(function () {
     const $div = $("div.movable");
     const $img = $("div.movable>img");
 
-    let top = parseInt($div.css("top")) || 100;
-    let left = parseInt($div.css("left")) || 100;
+    const $isKeyBased = $("div#inputs>#isKeyBased");
+    const $isAccelerationBased = $("div#inputs>#isAccelerationBased");    
+    const $isGravityBased = $("div#inputs>#isGravityBased");   
+    
+    if ($isKeyBased.attr("checked")) {
+        isKeyBased = true;
+    } else {
+        isKeyBased = false;
+    }
+
+    if ($isAccelerationBased.attr("checked")) {
+        isAccelerationBased = true;
+    } else {
+        isAccelerationBased = false;
+    }
+
+    if ($isGravityBased.attr("checked")) {
+        isGravityBased = true;
+    } else {
+        isGravityBased = false;
+    }
+
+    let top = parseInt($div.css("top"));
+    let left = parseInt($div.css("left"));
 
     let vx = 0;
     let vy = 0;
@@ -38,7 +60,6 @@ $(function () {
 
         if (keys.hasOwnProperty(key)) {
             keys[key] = false;
-            e.preventDefault();
         }
     });
 
@@ -65,8 +86,8 @@ $(function () {
             }
         }
 
-        if (isGravity) {
-            if (top + 403.5 + vy + gravity < $(window).innerHeight()) {
+        if (isGravityBased) {
+            if (top + 403.5 < $(window).innerHeight()) {
                 vy += (gravity);
             } else {
                 vy = 0;
