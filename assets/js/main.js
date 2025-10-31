@@ -4,31 +4,19 @@ let isKeyBased = true;
 let isAccelerationBased = true;
 let isGravityBased = false;
 
+let acceleration = 0.75;
+let friction = 0.95;
+let gravity = 0.2;
+let jumpForce = 5;
+
 $(function () {
+
     const $div = $("div.movable");
     const $img = $("div.movable>img");
 
-    const $isKeyBased = $("div#inputs>#isKeyBased");
-    const $isAccelerationBased = $("div#inputs>#isAccelerationBased");    
-    const $isGravityBased = $("div#inputs>#isGravityBased");   
-    
-    if ($isKeyBased.attr("checked")) {
-        isKeyBased = true;
-    } else {
-        isKeyBased = false;
-    }
-
-    if ($isAccelerationBased.attr("checked")) {
-        isAccelerationBased = true;
-    } else {
-        isAccelerationBased = false;
-    }
-
-    if ($isGravityBased.attr("checked")) {
-        isGravityBased = true;
-    } else {
-        isGravityBased = false;
-    }
+    const $isKeyBased = $("div#inputs>input#isKeyBased");
+    const $isAccelerationBased = $("div#inputs>input#isAccelerationBased");
+    const $isGravityBased = $("div#inputs>input#isGravityBased");
 
     let top = parseInt($div.css("top"));
     let left = parseInt($div.css("left"));
@@ -36,12 +24,32 @@ $(function () {
     let vx = 0;
     let vy = 0;
 
-    const acceleration = 0.75;
-    const friction = 0.95;
-    let gravity = 0.2;
-    let jumpForce = 5;
+    const keys = { w: false, a: false, s: false, d: false, space: false };
 
-    const keys = {w: false, a: false, s: false, d: false, space: false};
+    function handleInput() {
+        if ($isKeyBased.is(":checked")) {
+            isKeyBased = true;
+        } else {
+            isKeyBased = false;
+        }
+
+        if ($isAccelerationBased.is(":checked")) {
+            isAccelerationBased = true;
+        } else {
+            isAccelerationBased = false;
+        }
+
+        if ($isGravityBased.is(":checked")) {
+            isGravityBased = true;
+        } else {
+            isGravityBased = false;
+        }
+
+        // acceleration =  | 0.75;
+        // friction = | 0.95;
+        // gravity = | 0.2;
+        // jumpForce = | 5;
+    }
 
     $(document).on("keydown", function (e) {
         let key = e.key.toLowerCase();
@@ -51,7 +59,6 @@ $(function () {
             keys[key] = true;
         }
 
-        console.log(key)
     });
 
     $(document).on("keyup", function (e) {
@@ -68,6 +75,8 @@ $(function () {
     });
 
     function update() {
+        handleInput();
+
         if (isKeyBased) {
             if ((keys.a && keys.d) || (!keys.a && !keys.d)) {
                 $img.attr("src", "assets/img/idle-sprite.png");
@@ -122,7 +131,7 @@ $(function () {
             if (keys.d) left += step;
         }
 
-        $div.css({top: top + "px", left: left + "px"});
+        $div.css({ top: top + "px", left: left + "px" });
 
         requestAnimationFrame(update);
     }
