@@ -13,9 +13,11 @@ $(function () {
 
     let vx = 0;
     let vy = 0;
-    const acceleration = 0.45;
+
+    const acceleration = 0.75;
     const friction = 0.95;
-    const gravity = 5;
+    let gravity = 0.2;
+    let jumpForce = 5;
 
     const keys = {w: false, a: false, s: false, d: false, space: false};
 
@@ -25,7 +27,6 @@ $(function () {
 
         if (keys.hasOwnProperty(key)) {
             keys[key] = true;
-            e.preventDefault(); // prevent scrolling
         }
 
         console.log(key)
@@ -65,11 +66,11 @@ $(function () {
         }
 
         if (isGravity) {
-            if (top + 403.5 < $(window).innerHeight()) {
-                vy += (1 / (1 * gravity));
+            if (top + 403.5 + vy + gravity < $(window).innerHeight()) {
+                vy += (gravity);
             } else {
                 vy = 0;
-                if (keys.space) vy -= 25 / gravity;
+                if (keys.space) vy -= jumpForce;
             }
 
             if (keys.a) vx -= acceleration;
