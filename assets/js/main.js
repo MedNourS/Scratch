@@ -9,17 +9,16 @@ let friction = 0.95;
 let gravity = 0.2;
 let jumpForce = 5;
 
-$(function () {
+document.addEventListener("DOMContentLoaded", () => {
+    const div = document.querySelector("div.movable");
+    const img = document.querySelector("div.movable>img");
 
-    const $div = $("div.movable");
-    const $img = $("div.movable>img");
+    const isKeyBasedInput = document.querySelector("input#isKeyBased");
+    const isAccelerationBasedInput = document.querySelector("input#isAccelerationBased");
+    const isGravityBasedInput = document.querySelector("input#isGravityBased");
 
-    const $isKeyBased = $("div#inputs>input#isKeyBased");
-    const $isAccelerationBased = $("div#inputs>input#isAccelerationBased");
-    const $isGravityBased = $("div#inputs>input#isGravityBased");
-
-    let top = parseInt($div.css("top"));
-    let left = parseInt($div.css("left"));
+    let top = parseInt(div.style.top) | 100;
+    let left = parseInt(div.style.left) | 100;
 
     let vx = 0;
     let vy = 0;
@@ -27,42 +26,24 @@ $(function () {
     const keys = { w: false, a: false, s: false, d: false, space: false };
 
     function handleInput() {
-        if ($isKeyBased.is(":checked")) {
-            isKeyBased = true;
-        } else {
-            isKeyBased = false;
-        }
+        isKeyBased = isKeyBasedInput.checked;
 
-        if ($isAccelerationBased.is(":checked")) {
-            isAccelerationBased = true;
-        } else {
-            isAccelerationBased = false;
-        }
+        isAccelerationBased = isAccelerationBasedInput.checked;
 
-        if ($isGravityBased.is(":checked")) {
-            isGravityBased = true;
-        } else {
-            isGravityBased = false;
-        }
-
-        // acceleration =  | 0.75;
-        // friction = | 0.95;
-        // gravity = | 0.2;
-        // jumpForce = | 5;
+        isGravityBased = isGravityBasedInput.checked;
     }
 
-    $(document).on("keydown", function (e) {
-        let key = e.key.toLowerCase();
+    document.addEventListener("keydown", (e) => {
+        let key = e.key;
         if (key === " ") key = "space";
 
         if (keys.hasOwnProperty(key)) {
             keys[key] = true;
         }
-
     });
 
-    $(document).on("keyup", function (e) {
-        let key = e.key.toLowerCase();
+    document.addEventListener("keyup", (e) => {
+        let key = e.key;
         if (key === " ") key = "space";
 
         if (keys.hasOwnProperty(key)) {
@@ -70,33 +51,29 @@ $(function () {
         }
     });
 
-    $div.on("click", function () {
-        $(this).children().fadeToggle(500);
-    });
-
     function update() {
         handleInput();
 
         if (isKeyBased) {
             if ((keys.a && keys.d) || (!keys.a && !keys.d)) {
-                $img.attr("src", "assets/img/idle-sprite.png");
+                img.setAttribute("src", "assets/img/idle-sprite.png");
             } else if (keys.a) {
-                $img.attr("src", "assets/img/left-sprite.png");
+                img.setAttribute("src", "assets/img/left-sprite.png");
             } else if (keys.d) {
-                $img.attr("src", "assets/img/right-sprite.jpg");
+                img.setAttribute("src", "assets/img/right-sprite.jpg");
             }
         } else {
             if (-0.25 <= vx && vx <= 0.25) {
-                $img.attr("src", "assets/img/idle-sprite.png");
+                img.setAttribute("src", "assets/img/idle-sprite.png");
             } else if (vx <= 0) {
-                $img.attr("src", "assets/img/left-sprite.png");
+                img.setAttribute("src", "assets/img/left-sprite.png");
             } else if (0 <= vx) {
-                $img.attr("src", "assets/img/right-sprite.jpg");
+                img.setAttribute("src", "assets/img/right-sprite.jpg");
             }
         }
 
         if (isGravityBased) {
-            if (top + 403.5 < $(window).innerHeight()) {
+            if (top + 403.5 < window.innerHeight) {
                 vy += (gravity);
             } else {
                 vy = 0;
@@ -131,7 +108,8 @@ $(function () {
             if (keys.d) left += step;
         }
 
-        $div.css({ top: top + "px", left: left + "px" });
+        div.style.top = top + "px";
+        div.style.left = left + "px";
 
         requestAnimationFrame(update);
     }
