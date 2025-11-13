@@ -86,9 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 (platformLeft <= (right+left)/2 && (right+left)/2 <= platformRight)
                 &&
                 isGravityBased
-            ) {
+            ) { // If the player is located above or below the platform
                 if (bottom <= platformTop) { // Case 1: Player above platform
-                    // console.log("Case 1: Player above platform");
                     if (top + div.clientHeight < platformTop) {
                         vy += (gravity);
                     } else {
@@ -98,7 +97,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
                 } else if (platformBottom <= top) { // Case 2: Player below platform
-                    // console.log("Case 2: Player below platform");
                     if (top + div.clientHeight < window.innerHeight) {
                         vy += (gravity);
                     } else {
@@ -108,14 +106,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
                 } else { // Case 3: Player inside platform
-                    // console.log("Case 3: Player inside platform");
                     if (bottom < (platformTop+platformBottom)/2) { // Subcase 1: Player in top half
-                        // console.log("Subcase 1: Player in top half");
                         top = platformTop - img.clientHeight;
                         vy = 0;
                         if (keys.space) vy -= jumpForce;
                     } else if ((platformTop+platformBottom)/2 <= top) { // Subcase 2: Player in bottom half
-                        // console.log("Subcase 2: Player in bottom half");
                         top = platformBottom;
                         vy = 0;
                     }
@@ -123,6 +118,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 vx *= friction;
                 top += vy;
                 left += vx;
+            } else if (
+                (platformTop <= (top+bottom)/2 && (top+bottom)/2 <= platformBottom)
+                &&
+                isGravityBased
+            ) { // If the player is located right or left of the platform
+                
             } else {
                 if (isGravityBased) {
                     if (top + div.clientHeight < window.innerHeight) {
