@@ -87,10 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 &&
                 (top <= platformTop)
             ) {
-                if ((platformTop < bottom && bottom < platformBottom) && (0 <= vy)) {
-                    top = platformTop - (bottom - top);
-                }
-
+                let deltaX = 0;
+                let deltaY = 0;
+                
                 if (isGravityBased) {
                     if (top + div.clientHeight < platformTop) {
                         vy += (gravity);
@@ -101,8 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
                     vx *= friction;
-                    top += vy;
-                    left += vx;
+                    deltaY += vy;
+                    deltaX += vx;
                 } else if (isAccelerationBased) {
                     if (keys.w) vy -= acceleration;
                     if (keys.s) vy += acceleration;
@@ -110,14 +109,21 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (keys.d) vx += acceleration;
                     vx *= friction;
                     vy *= friction;
-                    top += vy;
-                    left += vx;
+                    deltaY += vy;
+                    deltaX += vx;
                 } else {
                     let step = 10;
-                    if (keys.w) top -= step;
-                    if (keys.s) top += step;
-                    if (keys.a) left -= step;
-                    if (keys.d) left += step;
+                    if (keys.w) deltaY -= step;
+                    if (keys.s) deltaY += step;
+                    if (keys.a) deltaX -= step;
+                    if (keys.d) deltaX += step;
+                }
+
+                if ((platformTop < top-deltaY && top-deltaY < platformBottom) || (platformTop < bottom-deltaX && bottom-deltaX < platformBottom)) {
+                    top = platformBottom;
+                } else {
+                    top += deltaY;
+                    left += deltaX;
                 }
             } else {
                 if (isGravityBased) {
