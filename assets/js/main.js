@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (keys.a) {
                 img.setAttribute("src", "assets/img/left-sprite.png");
             } else if (keys.d) {
-                img.setAttribute("src", "assets/img/right-sprite.jpg");
+                img.setAttribute("src", "assets/img/right-sprite.png");
             }
         } else {
             if (-0.25 <= vx && vx <= 0.25) {
@@ -68,12 +68,12 @@ document.addEventListener("DOMContentLoaded", () => {
             } else if (vx <= 0) {
                 img.setAttribute("src", "assets/img/left-sprite.png");
             } else if (0 <= vx) {
-                img.setAttribute("src", "assets/img/right-sprite.jpg");
+                img.setAttribute("src", "assets/img/right-sprite.png");
             }
         }
 
         if (isGravityBased) {
-            if (top + 403.5 < window.innerHeight) {
+            if (top + div.clientHeight < window.innerHeight) {
                 vy += (gravity);
             } else {
                 vy = 0;
