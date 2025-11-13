@@ -83,14 +83,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformRight = platformLeft + platform.clientWidth;
 
             if (
-                ((platformLeft <= left && left <= platformRight) || (platformLeft <= right && right <= platformRight))
+                (platformLeft <= (right+left)/2 && (right+left)/2 <= platformRight)
                 &&
-                (top <= platformTop)
+                isGravityBased
             ) {
-                let deltaX = 0;
-                let deltaY = 0;
-                
-                if (isGravityBased) {
+                if (bottom <= platformTop) { // Case 1: Player above platform
+                    // console.log("Case 1: Player above platform");
                     if (top + div.clientHeight < platformTop) {
                         vy += (gravity);
                     } else {
@@ -99,32 +97,32 @@ document.addEventListener("DOMContentLoaded", () => {
                     }
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
-                    vx *= friction;
-                    deltaY += vy;
-                    deltaX += vx;
-                } else if (isAccelerationBased) {
-                    if (keys.w) vy -= acceleration;
-                    if (keys.s) vy += acceleration;
+                } else if (platformBottom <= top) { // Case 2: Player below platform
+                    // console.log("Case 2: Player below platform");
+                    if (top + div.clientHeight < window.innerHeight) {
+                        vy += (gravity);
+                    } else {
+                        vy = 0;
+                        if (keys.space) vy -= jumpForce;
+                    }
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
-                    vx *= friction;
-                    vy *= friction;
-                    deltaY += vy;
-                    deltaX += vx;
-                } else {
-                    let step = 10;
-                    if (keys.w) deltaY -= step;
-                    if (keys.s) deltaY += step;
-                    if (keys.a) deltaX -= step;
-                    if (keys.d) deltaX += step;
+                } else { // Case 3: Player inside platform
+                    // console.log("Case 3: Player inside platform");
+                    if (bottom < (platformTop+platformBottom)/2) { // Subcase 1: Player in top half
+                        // console.log("Subcase 1: Player in top half");
+                        top = platformTop - img.clientHeight;
+                        vy = 0;
+                        if (keys.space) vy -= jumpForce;
+                    } else if ((platformTop+platformBottom)/2 <= top) { // Subcase 2: Player in bottom half
+                        // console.log("Subcase 2: Player in bottom half");
+                        top = platformBottom;
+                        vy = 0;
+                    }
                 }
-
-                if ((platformTop < top-deltaY && top-deltaY < platformBottom) || (platformTop < bottom-deltaX && bottom-deltaX < platformBottom)) {
-                    top = platformBottom;
-                } else {
-                    top += deltaY;
-                    left += deltaX;
-                }
+                vx *= friction;
+                top += vy;
+                left += vx;
             } else {
                 if (isGravityBased) {
                     if (top + div.clientHeight < window.innerHeight) {
