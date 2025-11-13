@@ -7,8 +7,6 @@
 .platform {
     position: absolute;
     border: 1px black solid;
-    top: 400px;
-    left: 300px;
     height: 30px;
     width: 100px;
 }

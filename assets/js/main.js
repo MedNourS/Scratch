@@ -19,9 +19,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const isAccelerationBasedInput = document.querySelector("input#isAccelerationBased");
     const isGravityBasedInput = document.querySelector("input#isGravityBased");
 
-    let top = parseInt(div.style.top) | 100;
+    let top = parseInt((div.style.top).slice(0, -2)) | 100;
     let bottom = top + div.clientHeight;
-    let left = parseInt(div.style.left) | 100;
+    let left = parseInt((div.style.left).slice(0, -2)) | 100;
     let right = left + div.clientWidth;
 
     let vx = 0;
@@ -76,42 +76,81 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (isGravityBased) {
-            if (top + div.clientHeight < window.innerHeight) {
-                vy += (gravity);
+        platforms.forEach((platform) => {
+            let platformTop = parseInt((platform.style.top).slice(0, -2));
+            let platformBottom = platformTop + platform.clientHeight;
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
+
+            if (
+                ((platformLeft <= left && left <= platformRight) || (platformLeft <= right && right <= platformRight))
+                &&
+                (top <= platformTop)
+            ) {
+                if ((platformTop < bottom && bottom < platformBottom) && (0 <= vy)) {
+                    top = platformTop - (bottom - top);
+                }
+
+                if (isGravityBased) {
+                    if (top + div.clientHeight < platformTop) {
+                        vy += (gravity);
+                    } else {
+                        vy = 0;
+                        if (keys.space) vy -= jumpForce;
+                    }
+                    if (keys.a) vx -= acceleration;
+                    if (keys.d) vx += acceleration;
+                    vx *= friction;
+                    top += vy;
+                    left += vx;
+                } else if (isAccelerationBased) {
+                    if (keys.w) vy -= acceleration;
+                    if (keys.s) vy += acceleration;
+                    if (keys.a) vx -= acceleration;
+                    if (keys.d) vx += acceleration;
+                    vx *= friction;
+                    vy *= friction;
+                    top += vy;
+                    left += vx;
+                } else {
+                    let step = 10;
+                    if (keys.w) top -= step;
+                    if (keys.s) top += step;
+                    if (keys.a) left -= step;
+                    if (keys.d) left += step;
+                }
             } else {
-                vy = 0;
-                if (keys.space) vy -= jumpForce;
+                if (isGravityBased) {
+                    if (top + div.clientHeight < window.innerHeight) {
+                        vy += (gravity);
+                    } else {
+                        vy = 0;
+                        if (keys.space) vy -= jumpForce;
+                    }
+                    if (keys.a) vx -= acceleration;
+                    if (keys.d) vx += acceleration;
+                    vx *= friction;
+                    top += vy;
+                    left += vx;
+                } else if (isAccelerationBased) {
+                    if (keys.w) vy -= acceleration;
+                    if (keys.s) vy += acceleration;
+                    if (keys.a) vx -= acceleration;
+                    if (keys.d) vx += acceleration;
+                    vx *= friction;
+                    vy *= friction;
+                    top += vy;
+                    left += vx;
+                } else {
+                    let step = 10;
+                    if (keys.w) top -= step;
+                    if (keys.s) top += step;
+                    if (keys.a) left -= step;
+                    if (keys.d) left += step;
+                }
             }
-
-            if (keys.a) vx -= acceleration;
-            if (keys.d) vx += acceleration;
-
-            vx *= friction;
-
-            top += vy;
-            left += vx;
-        } else if (isAccelerationBased) {
-            if (keys.w) vy -= acceleration;
-            if (keys.s) vy += acceleration;
-            if (keys.a) vx -= acceleration;
-            if (keys.d) vx += acceleration;
-
-            vx *= friction;
-            vy *= friction;
-
-            top += vy;
-            left += vx;
-
-        } else {
-            let step = 10;
-
-            if (keys.w) top -= step;
-            if (keys.s) top += step;
-            if (keys.a) left -= step;
-            if (keys.d) left += step;
-        }
-
+        });
+        
         div.style.top = top + "px";
         bottom = top + div.clientHeight;
         div.style.left = left + "px";
