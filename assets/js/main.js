@@ -13,12 +13,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const div = document.querySelector("div.movable");
     const img = document.querySelector("div.movable>img");
 
+    const platforms = document.querySelectorAll("div.platform")
+
     const isKeyBasedInput = document.querySelector("input#isKeyBased");
     const isAccelerationBasedInput = document.querySelector("input#isAccelerationBased");
     const isGravityBasedInput = document.querySelector("input#isGravityBased");
 
     let top = parseInt(div.style.top) | 100;
+    let bottom = top + div.clientHeight;
     let left = parseInt(div.style.left) | 100;
+    let right = left + div.clientWidth;
 
     let vx = 0;
     let vy = 0;
@@ -109,7 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         div.style.top = top + "px";
+        bottom = top + div.clientHeight;
         div.style.left = left + "px";
+        right = left + div.clientWidth;
 
         requestAnimationFrame(update);
     }
