@@ -13,16 +13,19 @@
 		<link rel="stylesheet" href="assets/css/main.css">
 	</head>
 	<body>
-		<div id="inputs">
+		<div id="inputs" style="display: none;">
 			<label for="isKeyBased">Key Based?</label><input type="checkbox" name="isKeyBased" id="isKeyBased"><br>
-			<label for="isGravityBased">Gravity Based?</label><input type="checkbox" name="isGravityBased" id="isGravityBased"><br>
-			<label for="isAccelerationBased">Acceleration Based?</label><input type="checkbox" name="isAccelerationBased" id="isAccelerationBased"><br>
+
+			<label for="isStaticBased">Static Movement Based?</label><input type="radio" name="movement" id="isStaticBased" checked><br>
+			<label for="isGravityBased">Gravity Based?</label><input type="radio" name="movement" id="isGravityBased"><br>
+			<label for="isAccelerationBased">Acceleration Based?</label><input type="radio" name="movement" id="isAccelerationBased"><br>
+
+			<label for="fps">FPS Cap: </label><input type="number" name="fps" id="fps" value="120" step="10" min="0" max="240"><br>
+			<label for="param1" id="param1-label">Step: </label><input type="number" name="param1" id="param1" value="10" min="" max=""><br>
+			<label for="param2" id="param2-label"></label><input type="number" name="param2" id="param2" value="" min="" max=""><br>
 		</div>
 		<div class="movable">
-			<img
-				src="assets/img/idle-sprite.png"
-				alt="Move Me!"
-			>
+			<img src="assets/img/idle-sprite.png">
 		</div>
 		<div class="platform-horizontal" style="top: 400px; left: 300px; height: 30px; width: 100px;"></div>
 		<div class="platform-horizontal" style="top: 600px; left: 600px; height: 100px; width: 100px;"></div>
