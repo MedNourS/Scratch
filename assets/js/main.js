@@ -13,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const div = document.querySelector("div.movable");
     const img = document.querySelector("div.movable>img");
 
-    const platforms = document.querySelectorAll("div.platform")
+    const horizontalPlatforms = document.querySelectorAll("div.platform-horizontal")
 
     const isKeyBasedInput = document.querySelector("input#isKeyBased");
     const isAccelerationBasedInput = document.querySelector("input#isAccelerationBased");
@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        platforms.forEach((platform) => {
+        horizontalPlatforms.forEach((platform) => {
             let platformTop = parseInt((platform.style.top).slice(0, -2));
             let platformBottom = platformTop + platform.clientHeight;
             let platformLeft = parseInt((platform.style.left).slice(0, -2));
