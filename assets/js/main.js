@@ -9,6 +9,8 @@ let friction = 0.95;
 let gravity = 0.2;
 let jumpForce = 5;
 
+let fps = 165
+
 document.addEventListener("DOMContentLoaded", () => {
     const div = document.querySelector("div.movable");
     const img = document.querySelector("div.movable>img");
@@ -123,7 +125,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 &&
                 isGravityBased
             ) { // If the player is located right or left of the platform
-                
+                vy += (gravity);
+				if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
+				vx *= friction;
+                top += vy;
+                left += vx;
             } else {
                 if (isGravityBased) {
                     if (top + div.clientHeight < window.innerHeight) {
@@ -161,7 +168,9 @@ document.addEventListener("DOMContentLoaded", () => {
         div.style.left = left + "px";
         right = left + div.clientWidth;
 
-        requestAnimationFrame(update);
+		setTimeout(() => {
+  			requestAnimationFrame(update);
+		}, 1000 / fps);
     }
 
     update();
