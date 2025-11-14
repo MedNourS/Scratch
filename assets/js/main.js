@@ -148,7 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         topPlatforms.forEach((platform) => {
             let platformTop = parseInt((platform.style.top).slice(0, -2));
-            let platformBottom = platformTop + platform.clientHeight;
 
             if (
                 (bottom < platformTop)
@@ -187,7 +186,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         leftPlatforms.forEach((platform) => {
             let platformLeft = parseInt((platform.style.left).slice(0, -2));
-            let platformRight = platformLeft + platform.clientWidth;
 
             if (
                 (right < platformLeft)
