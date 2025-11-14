@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 		if (isGravityBased) {
 			param1Label.innerHTML = "Gravity (0-1): ";
+<<<<<<< HEAD
 			
             (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? gravity = parseFloat(param1Input.value) : gravity = 0.35;
 			param1Input.setAttribute("min", "0");
@@ -90,6 +91,36 @@ document.addEventListener("DOMContentLoaded", () => {
 			param2Label.style.display = "none";
 			
             param2Input.style.display = "none";
+=======
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? gravity = parseFloat(param1Input.value) : gravity = 0.35;
+			param1Input.setAttribute("min", "0");
+			param1Input.setAttribute("max", "1");
+            param1Input.setAttribute("step", "0.05");
+
+			param2Label.innerHTML = "Jump force (0-inf): ";
+			(0 <= parseFloat(param2Input.value)) ? jumpForce = parseFloat(param2Input.value) : jumpForce = 10;
+			param2Input.setAttribute("min", "0");
+            param2Input.setAttribute("step", "2.5");
+		} else if (isAccelerationBased) {
+			param1Label.innerHTML = "Acceleration (0-1): ";
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? acceleration = parseFloat(param1Input.value) : acceleration = 0.75;
+			param1Input.setAttribute("min", "0");
+			param1Input.setAttribute("max", "1");
+            param1Input.setAttribute("step", "0.05");
+			
+			param2Label.innerHTML = "Friction (0-1): ";
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? friction = parseFloat(param2Input.value) : friction = 0.95;
+			param2Input.setAttribute("min", "0");
+			param2Input.setAttribute("max", "1");
+            param2Input.setAttribute("step", "0.05");
+		} else {
+			param1Label.innerHTML = "Step: ";
+			step = parseFloat(param1Input.value);
+			param1Input.setAttribute("min", "");
+			param1Input.setAttribute("max", "");
+
+			param2Label.innerHTML = "Parameter #2: ";
+>>>>>>> d7a6208a1d5c8c9351625cde0e835db8f6ef2d1f
 		}
     }
 
