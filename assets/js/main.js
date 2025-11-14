@@ -145,56 +145,59 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        
-        topPlatforms.forEach((platform) => {
-            let platformTop = parseInt((platform.style.top).slice(0, -2));
+        if (topPlatforms.length + rightPlatforms.length + bottomPlatforms.length + leftPlatforms.length == 0) {
+            // Insert player movement code here
+        } else {
+            topPlatforms.forEach((platform) => {
+                let platformTop = parseInt((platform.style.top).slice(0, -2));
 
-            if (
-                (bottom < platformTop)
-                &&
-                isGravityBased
-            ) {
-                console.log("Hello");
-            }
-        });
+                if (
+                    (bottom < platformTop)
+                    &&
+                    isGravityBased
+                ) {
+                    // Insert top platform logic here
+                }
+            });
 
-        rightPlatforms.forEach((platform) => {
-            let platformLeft = parseInt((platform.style.left).slice(0, -2));
-            let platformRight = platformLeft + platform.clientWidth;
+            rightPlatforms.forEach((platform) => {
+                let platformLeft = parseInt((platform.style.left).slice(0, -2));
+                let platformRight = platformLeft + platform.clientWidth;
 
-            if (
-                (platformRight < left)
-                &&
-                isGravityBased
-            ) {
-                console.log("Hello");
-            }
-        });
+                if (
+                    (platformRight < left)
+                    &&
+                    isGravityBased
+                ) {
+                    // Insert right platform logic here
+                }
+            });
 
-        bottomPlatforms.forEach((platform) => {
-            let platformTop = parseInt((platform.style.top).slice(0, -2));
-            let platformBottom = platformTop + platform.clientHeight;
+            bottomPlatforms.forEach((platform) => {
+                let platformTop = parseInt((platform.style.top).slice(0, -2));
+                let platformBottom = platformTop + platform.clientHeight;
 
-            if (
-                (platformBottom < top)
-                &&
-                isGravityBased
-            ) {
-                console.log("Hello");
-            }
-        });
-        
-        leftPlatforms.forEach((platform) => {
-            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+                if (
+                    (platformBottom < top)
+                    &&
+                    isGravityBased
+                ) {
+                    // Insert bottom platform logic here
+                }
+            });
 
-            if (
-                (right < platformLeft)
-                &&
-                isGravityBased
-            ) {
-                console.log("Hello");
-            }
-        });
+            leftPlatforms.forEach((platform) => {
+                let platformLeft = parseInt((platform.style.left).slice(0, -2));
+
+                if (
+                    (right < platformLeft)
+                    &&
+                    isGravityBased
+                ) {
+                    // Insert left platform logic here
+                }
+            });
+        }
 
         div.style.top = top + "px";
         bottom = top + div.clientHeight;
