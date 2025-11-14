@@ -8,6 +8,7 @@ let acceleration = 0.75;
 let friction = 0.95;
 let gravity = 0.2;
 let jumpForce = 5;
+let step = 10;
 
 let fps = 165
 
@@ -17,9 +18,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const horizontalPlatforms = document.querySelectorAll("div.platform-horizontal")
 
-    const isKeyBasedInput = document.querySelector("input#isKeyBased");
-    const isAccelerationBasedInput = document.querySelector("input#isAccelerationBased");
-    const isGravityBasedInput = document.querySelector("input#isGravityBased");
+	const divInputs = document.querySelector("#inputs")
+    const isKeyBasedInput = document.querySelector("#isKeyBased");
+    const isAccelerationBasedInput = document.querySelector("#isAccelerationBased");
+    const isGravityBasedInput = document.querySelector("#isGravityBased");
+	const fpsInput = document.querySelector("#fps");
+	const param1Label = document.querySelector("#param1-label");
+	const param1Input = document.querySelector("#param1");
+	const param2Label = document.querySelector("#param2-label");
+	const param2Input = document.querySelector("#param2");
 
     let top = parseInt((div.style.top).slice(0, -2)) | 100;
     let bottom = top + div.clientHeight;
@@ -31,12 +38,43 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const keys = { w: false, a: false, s: false, d: false, space: false };
 
-    function handleInput() {
+    function handleInputs() {
         isKeyBased = isKeyBasedInput.checked;
-
         isAccelerationBased = isAccelerationBasedInput.checked;
-
         isGravityBased = isGravityBasedInput.checked;
+		fps = fpsInput.value;
+
+		if (isGravityBased) {
+			param1Label.innerHTML = "Gravity (0-1): ";
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? gravity = parseFloat(param1Input.value) : gravity = 0.35;
+			param1Input.setAttribute("min", "0");
+			param1Input.setAttribute("max", "1");
+            param1Input.setAttribute("step", "0.05");
+
+			param2Label.innerHTML = "Jump force (0-inf): ";
+			(0 <= parseFloat(param2Input.value)) ? jumpForce = parseFloat(param2Input.value) : jumpForce = 10;
+			param2Input.setAttribute("min", "0");
+            param2Input.setAttribute("step", "2.5");
+		} else if (isAccelerationBased) {
+			param1Label.innerHTML = "Acceleration (0-1): ";
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? acceleration = parseFloat(param1Input.value) : acceleration = 0.75;
+			param1Input.setAttribute("min", "0");
+			param1Input.setAttribute("max", "1");
+            param1Input.setAttribute("step", "0.05");
+			
+			param2Label.innerHTML = "Friction (0-1): ";
+			(0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? friction = parseFloat(param2Input.value) : friction = 0.95;
+			param2Input.setAttribute("min", "0");
+			param2Input.setAttribute("max", "1");
+            param2Input.setAttribute("step", "0.05");
+		} else {
+			param1Label.innerHTML = "Step: ";
+			step = parseFloat(param1Input.value);
+			param1Input.setAttribute("min", "");
+			param1Input.setAttribute("max", "");
+
+			param2Label.innerHTML = "Parameter #2: ";
+		}
     }
 
     document.addEventListener("keydown", (e) => {
@@ -57,8 +95,18 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+	document.addEventListener("click", (e) => {
+		if (!(
+			e.clientX <= divInputs.clientWidth
+			&&
+			e.clientY <= divInputs.clientHeight
+		)) {
+			(divInputs.style.display === "") ? divInputs.style.display = "none" : divInputs.style.display = "";
+		}
+	});
+
     function update() {
-        handleInput();
+        handleInputs();
 
         if (isKeyBased) {
             if ((keys.a && keys.d) || (!keys.a && !keys.d)) {
@@ -154,7 +202,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     top += vy;
                     left += vx;
                 } else {
-                    let step = 10;
                     if (keys.w) top -= step;
                     if (keys.s) top += step;
                     if (keys.a) left -= step;
