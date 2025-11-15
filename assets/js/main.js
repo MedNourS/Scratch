@@ -41,6 +41,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const keys = { w: false, a: false, s: false, d: false, space: false };
 
+    let platformTopCollisions = false;
+    let platformRightCollisions = false;
+    let platformBottomCollisions = false;
+    let platformLeftCollisions = false;
+
     function handleInputs() {
         isKeyBased = isKeyBasedInput.checked;
         isAccelerationBased = isAccelerationBasedInput.checked;
@@ -124,37 +129,80 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    function playerMove() {
-        if (isGravityBased) {
-            vy += (gravity);
+    function playerMove(collisionState) {
 
-            if (keys.a) vx -= acceleration;
-            if (keys.d) vx += acceleration;
+        if (collisionState === undefined) {
+            if (isGravityBased) {
+                vy += (gravity);
 
-            vx *= friction;
+                if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
 
-            top += vy;
-            left += vx;
-        } else if (isAccelerationBased) {
-            if (keys.w) vy -= acceleration;
-            if (keys.s) vy += acceleration;
-            if (keys.a) vx -= acceleration;
-            if (keys.d) vx += acceleration;
+                vx *= friction;
 
-            vx *= friction;
-            vy *= friction;
+                top += vy;
+                left += vx;
+            } else if (isAccelerationBased) {
+                if (keys.w) vy -= acceleration;
+                if (keys.s) vy += acceleration;
+                if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
 
-            top += vy;
-            left += vx;
+                vx *= friction;
+                vy *= friction;
 
+                top += vy;
+                left += vx;
+
+            } else {
+                let step = 10;
+
+                if (keys.w) top -= step;
+                if (keys.s) top += step;
+                if (keys.a) left -= step;
+                if (keys.d) left += step;
+            }
         } else {
-            let step = 10;
+            if (collisionState[0] === true) {
+                // Add top moving logic
+                console.log("Collision top");
+                if (0 < vy) vy = 0;
+                if (keys.space) vy -= jumpForce;
 
-            if (keys.w) top -= step;
-            if (keys.s) top += step;
-            if (keys.a) left -= step;
-            if (keys.d) left += step;
+                if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
+
+                vx *= friction;
+
+                top += vy;
+                left += vx;
+            }
+
+            if (collisionState[1] === true) {
+                // Add right moving logic
+                console.log("Collision right");
+            }
+            
+            if (collisionState[2] === true) {
+                // Add bottom moving logic                
+                console.log("Collision bottom");
+                if (vy < 0) vy = 0;
+
+                if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
+
+                vx *= friction;
+
+                top += vy;
+                left += vx;
+            }
+            
+            if (collisionState[3] === true) {
+                // Add left moving logic
+                console.log("Collision left");
+            }
         }
+
     }
 
     function update() {
@@ -178,76 +226,86 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         }
 
-        if (topPlatforms.length + rightPlatforms.length + bottomPlatforms.length + leftPlatforms.length == 0) {
+        topPlatforms.forEach((platform, index) => {
+            let platformTop = parseInt((platform.style.top).slice(0, -2));
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
+
+            platformTopCollisions = (
+                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                &&
+                (bottom <= platformTop)
+                &&                
+                (platformTop <= bottom + vy + gravity)
+                &&
+                isGravityBased
+            )
+        });
+
+        rightPlatforms.forEach((platform) => {
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
+
+            platformRightCollisions
+            if (
+                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                &&
+                (platformRight <= left - ((isGravityBased || isAccelerationBased) ? vx - acceleration : step))
+                &&
+                isGravityBased
+            ) {
+                platformRightCollisions = true;
+            } else {
+                platformRightCollisions = false;
+            }
+        });
+
+        bottomPlatforms.forEach((platform) => {
+            let platformTop = parseInt((platform.style.top).slice(0, -2));
+            let platformBottom = platformTop + platform.clientHeight;
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
+
+            if (
+                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                &&
+                (platformBottom <= top)
+                &&
+                (top + vy <= platformBottom)
+                &&
+                isGravityBased
+            ) {
+                platformBottomCollisions = true;
+            } else {
+                platformBottomCollisions = false;
+            }
+        });
+
+        leftPlatforms.forEach((platform) => {
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+
+            if (
+                (right < platformLeft)
+                &&
+                isGravityBased
+            ) {
+                platformLeftCollisions = true;
+            } else {
+                platformLeftCollisions = false;
+            }
+        });
+
+        if (
+            (topPlatforms.length + rightPlatforms.length + bottomPlatforms.length + leftPlatforms.length == 0)
+            ||
+            !(platformTopCollisions || platformRightCollisions || platformBottomCollisions || platformLeftCollisions)
+        ) {
             // Insert player movement code here
             playerMove();
         } else {
-            topPlatforms.forEach((platform) => {
-                let platformTop = parseInt((platform.style.top).slice(0, -2));
-                let platformLeft = parseInt((platform.style.left).slice(0, -2));
-                let platformRight = platformLeft + platform.clientWidth;
-
-                if (
-                    (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
-                    &&
-                    (platformTop <= bottom + vy + gravity)
-                    &&
-                    isGravityBased
-                ) {
-                    vy = 0;
-                    if (keys.space) vy -= jumpForce;
-                    top = top - bottom + platformTop;
-
-                    if (keys.a) vx -= acceleration;
-                    if (keys.d) vx += acceleration;
-
-                    vx *= friction;
-
-                    top += vy;
-                    left += vx;
-                } else {
-                    playerMove();
-                }
-            });
-
-            rightPlatforms.forEach((platform) => {
-                let platformLeft = parseInt((platform.style.left).slice(0, -2));
-                let platformRight = platformLeft + platform.clientWidth;
-
-                if (
-                    (platformRight < left)
-                    &&
-                    isGravityBased
-                ) {
-                    // Insert right platform logic here
-                }
-            });
-
-            bottomPlatforms.forEach((platform) => {
-                let platformTop = parseInt((platform.style.top).slice(0, -2));
-                let platformBottom = platformTop + platform.clientHeight;
-
-                if (
-                    (platformBottom < top)
-                    &&
-                    isGravityBased
-                ) {
-                    // Insert bottom platform logic here
-                }
-            });
-
-            leftPlatforms.forEach((platform) => {
-                let platformLeft = parseInt((platform.style.left).slice(0, -2));
-
-                if (
-                    (right < platformLeft)
-                    &&
-                    isGravityBased
-                ) {
-                    // Insert left platform logic here
-                }
-            });
+            playerMove([platformTopCollisions, platformRightCollisions, platformBottomCollisions, platformLeftCollisions]);
         }
+
 
         div.style.top = top + "px";
         bottom = top + div.clientHeight;
