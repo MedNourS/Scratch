@@ -126,12 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playerMove() {
         if (isGravityBased) {
-            if (bottom < window.innerHeight) {
-                vy += (gravity);
-            } else {
-                vy = 0;
-                if (keys.space) vy -= jumpForce;
-            }
+            vy += (gravity);
 
             if (keys.a) vx -= acceleration;
             if (keys.d) vx += acceleration;
@@ -195,18 +190,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (
                     (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
                     &&
-                    (bottom <= platformTop)
+                    (platformTop <= bottom + vy + gravity)
                     &&
                     isGravityBased
                 ) {
-                    // Insert top platform logic here
-                    if (platformTop <= bottom + vy + gravity) {
-                        vy = 0;
-                        if (keys.space) vy -= jumpForce;
-                        top = top - bottom + platformTop;
-                    } else {
-                        vy += (gravity);                        
-                    }
+                    vy = 0;
+                    if (keys.space) vy -= jumpForce;
+                    top = top - bottom + platformTop;
 
                     if (keys.a) vx -= acceleration;
                     if (keys.d) vx += acceleration;
