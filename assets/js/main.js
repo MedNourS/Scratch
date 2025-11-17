@@ -41,10 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const keys = { w: false, a: false, s: false, d: false, space: false };
 
-    let platformTopCollisions = false;
-    let platformRightCollisions = false;
-    let platformBottomCollisions = false;
-    let platformLeftCollisions = false;
+    let platformTopCollisions = [];
+    let platformRightCollisions = [];
+    let platformBottomCollisions = [];
+    let platformLeftCollisions = [];
 
     function handleInputs() {
         isKeyBased = isKeyBasedInput.checked;
@@ -131,7 +131,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playerMove(collisionState) {
 
-        if (collisionState === undefined) {
+        // console.log(collisionState);
+
+        if (
+            !collisionState[0].includes(true)
+            &&
+            !collisionState[1].includes(true)
+            &&
+            !collisionState[2].includes(true)
+            &&
+            !collisionState[3].includes(true)
+        ) {
             if (isGravityBased) {
                 vy += gravity;
 
@@ -163,46 +173,46 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (keys.d) left += step;
             }
         } else {
-            console.log(collisionState)
-
-            if (collisionState[0] === true) {
-                // Add top moving logic
-                console.log("Collision top");
+            if (collisionState[0].includes(true) && !collisionState[2].includes(true)) {
+                // Top moving logic with no bottom platform collision
                 if (0 < vy) vy = 0;
 
                 if (keys.space) vy -= jumpForce;
 
-                vx *= friction;
-
                 top += vy;
-                left += vx;
-            }
-
-            if (collisionState[1] === true) {
-                // Add right moving logic
-                console.log("Collision right");
-            }
-
-            if (collisionState[2] === true) {
-                // Add bottom moving logic                
-                console.log("Collision bottom");
+            } else if (!collisionState[0].includes(true) && collisionState[2].includes(true)) {
+                // Bottom moving logic with no top platform collision
                 if (vy < 0) vy = 0;
                 if (0 <= vy) vy += gravity;
-                console.log('vy:', vy)
-
-                vx *= friction;
 
                 top += vy;
+            } else if (!collisionState[0].includes(true) && !collisionState[2].includes(true)) {
+                vy += gravity;
+                top += vy;
+            }
+
+            if (collisionState[1].includes(true) && !collisionState[3].includes(true)) {
+                if (keys.d) vx += acceleration;
+                if (vx <= 0) vx = 0;
+                vx *= friction;                
+                left += vx;
+            } else if (!collisionState[1].includes(true) && collisionState[3].includes(true)) {
+                console.log("Left col");
+                if (keys.a) vx -= acceleration;
+                if (0 <= vx) vx = 0;
+                vx *= friction;
+                left += vx;
+            } else if (!collisionState[1].includes(true) && !collisionState[3].includes(true)) {
+                if (keys.a) vx -= acceleration;
+                if (keys.d) vx += acceleration;
+                vx *= friction;                
                 left += vx;
             }
 
-            if (collisionState[3] === true) {
+            if (collisionState[3].includes(true)) {
                 // Add left moving logic
                 console.log("Collision left");
             }
-
-            if (keys.a) vx -= acceleration;
-            if (keys.d) vx += acceleration;
         }
 
     }
@@ -233,7 +243,7 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformLeft = parseInt((platform.style.left).slice(0, -2));
             let platformRight = platformLeft + platform.clientWidth;
 
-            platformTopCollisions = (
+            platformTopCollisions[index] = (
                 (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
                 &&
                 (bottom <= platformTop)
@@ -241,34 +251,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 (platformTop <= bottom + vy + gravity)
                 &&
                 isGravityBased
-            )
+            );
+
         });
 
-        rightPlatforms.forEach((platform) => {
-            let platformLeft = parseInt((platform.style.left).slice(0, -2));
-            let platformRight = platformLeft + platform.clientWidth;
-
-            platformRightCollisions
-            if (
-                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
-                &&
-                (platformRight <= left - ((isGravityBased || isAccelerationBased) ? vx - acceleration : step))
-                &&
-                isGravityBased
-            ) {
-                platformRightCollisions = true;
-            } else {
-                platformRightCollisions = false;
-            }
-        });
-
-        bottomPlatforms.forEach((platform) => {
+        rightPlatforms.forEach((platform, index) => {
             let platformTop = parseInt((platform.style.top).slice(0, -2));
             let platformBottom = platformTop + platform.clientHeight;
             let platformLeft = parseInt((platform.style.left).slice(0, -2));
             let platformRight = platformLeft + platform.clientWidth;
 
-            if (
+            platformRightCollisions[index] = (
+                (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                &&
+                (platformRight <= left)
+                &&
+                (left + vx - acceleration <= platformRight)
+                &&
+                isGravityBased
+            );
+        });
+
+        bottomPlatforms.forEach((platform, index) => {
+            let platformTop = parseInt((platform.style.top).slice(0, -2));
+            let platformBottom = platformTop + platform.clientHeight;
+            let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
+
+            platformBottomCollisions[index] = (
                 (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
                 &&
                 (platformBottom < top)
@@ -276,30 +286,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 (top + vy < platformBottom)
                 &&
                 isGravityBased
-            ) {
-                platformBottomCollisions = true;
-            } else {
-                platformBottomCollisions = false;
-            }
+            );
         });
 
-        leftPlatforms.forEach((platform) => {
+        leftPlatforms.forEach((platform, index) => {
+            let platformTop = parseInt((platform.style.top).slice(0, -2));
+            let platformBottom = platformTop + platform.clientHeight;
             let platformLeft = parseInt((platform.style.left).slice(0, -2));
+            let platformRight = platformLeft + platform.clientWidth;
 
-            if (
-                (right < platformLeft)
+            platformLeftCollisions[index] = (
+                (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                &&
+                (right <= platformLeft)
+                &&
+                (platformLeft <= right + vx + acceleration)
                 &&
                 isGravityBased
-            ) {
-                platformLeftCollisions = true;
-            } else {
-                platformLeftCollisions = false;
-            }
+            );
         });
 
         if (
-            (topPlatforms.length + rightPlatforms.length + bottomPlatforms.length + leftPlatforms.length == 0)
-            ||
             !(platformTopCollisions || platformRightCollisions || platformBottomCollisions || platformLeftCollisions)
         ) {
             // Insert player movement code here
