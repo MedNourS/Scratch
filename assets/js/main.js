@@ -131,8 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function playerMove(collisionState) {
 
-        // console.log(collisionState);
-
         if (
             !collisionState[0].includes(true)
             &&
@@ -197,7 +195,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 vx *= friction;                
                 left += vx;
             } else if (!collisionState[1].includes(true) && collisionState[3].includes(true)) {
-                console.log("Left col");
                 if (keys.a) vx -= acceleration;
                 if (0 <= vx) vx = 0;
                 vx *= friction;
@@ -207,11 +204,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (keys.d) vx += acceleration;
                 vx *= friction;                
                 left += vx;
-            }
-
-            if (collisionState[3].includes(true)) {
-                // Add left moving logic
-                console.log("Collision left");
             }
         }
 
