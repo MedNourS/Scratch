@@ -236,7 +236,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformRight = platformLeft + platform.clientWidth;
 
             platformTopCollisions[index] = (
-                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                (
+                    (platformLeft < left && left < platformRight)
+                    ||
+                    (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                    ||
+                    (platformLeft < right && right < platformRight)
+                )
                 &&
                 (bottom <= platformTop)
                 &&
@@ -254,7 +260,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformRight = platformLeft + platform.clientWidth;
 
             platformRightCollisions[index] = (
-                (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                (
+                    (platformTop < top && top < platformBottom)
+                    ||
+                    (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                    ||
+                    (platformTop < bottom && bottom < platformBottom)
+                )
                 &&
                 (platformRight <= left)
                 &&
@@ -271,7 +283,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformRight = platformLeft + platform.clientWidth;
 
             platformBottomCollisions[index] = (
-                (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                (
+                    (platformLeft < left && left < platformRight)
+                    ||
+                    (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
+                    ||
+                    (platformLeft < right && right < platformRight)
+                )
                 &&
                 (platformBottom < top)
                 &&
@@ -288,7 +306,13 @@ document.addEventListener("DOMContentLoaded", () => {
             let platformRight = platformLeft + platform.clientWidth;
 
             platformLeftCollisions[index] = (
-                (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                (
+                    (platformTop < top && top < platformBottom)
+                    ||
+                    (platformTop < (bottom + top) / 2 && (bottom + top) / 2 < platformBottom)
+                    ||
+                    (platformTop < bottom && bottom < platformBottom)
+                )
                 &&
                 (right <= platformLeft)
                 &&
