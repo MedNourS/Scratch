@@ -7,7 +7,7 @@ let isGravityBased = false;
 let acceleration = 0.75;
 let friction = 0.95;
 let gravity = 0.2;
-let jumpForce = 5;
+let jumpForce = 15;
 let step = 10;
 
 let fps = 165
@@ -52,53 +52,53 @@ document.addEventListener("DOMContentLoaded", () => {
         isGravityBased = isGravityBasedInput.checked;
         fps = fpsInput.value;
 
-        if (isGravityBased) {
-            param1Label.innerHTML = "Gravity (0-1): ";
+        // if (isGravityBased) {
+        //     param1Label.innerHTML = "Gravity (0-1): ";
 
-            (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? gravity = parseFloat(param1Input.value) : gravity = 0.35;
-            param1Input.setAttribute("min", "0");
-            param1Input.setAttribute("max", "1");
-            param1Input.setAttribute("step", "0.05");
-            param1Input.setAttribute("value", gravity);
+        //     (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? gravity = parseFloat(param1Input.value) : gravity = 0.35;
+        //     param1Input.setAttribute("min", "0");
+        //     param1Input.setAttribute("max", "1");
+        //     param1Input.setAttribute("step", "0.05");
+        //     param1Input.setAttribute("value", gravity);
 
-            param2Label.style.display = "";
-            param2Label.innerHTML = "Jump force (0-inf): ";
+        //     param2Label.style.display = "";
+        //     param2Label.innerHTML = "Jump force (0-inf): ";
 
-            param2Input.style.display = "";
-            (0 <= parseFloat(param2Input.value)) ? jumpForce = parseFloat(param2Input.value) : jumpForce = 10;
-            param2Input.setAttribute("min", "0");
-            param2Input.setAttribute("step", "2.5");
-            param2Input.setAttribute("value", jumpForce);
-        } else if (isAccelerationBased) {
-            param1Label.innerHTML = "Acceleration (0-1): ";
+        //     param2Input.style.display = "";
+        //     (0 <= parseFloat(param2Input.value)) ? jumpForce = parseFloat(param2Input.value) : jumpForce = 10;
+        //     param2Input.setAttribute("min", "0");
+        //     param2Input.setAttribute("step", "2.5");
+        //     param2Input.setAttribute("value", jumpForce);
+        // } else if (isAccelerationBased) {
+        //     param1Label.innerHTML = "Acceleration (0-1): ";
 
-            (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? acceleration = parseFloat(param1Input.value) : acceleration = 0.75;
-            param1Input.setAttribute("min", "0");
-            param1Input.setAttribute("max", "1");
-            param1Input.setAttribute("step", "0.05");
-            param1Input.setAttribute("value", acceleration);
+        //     (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? acceleration = parseFloat(param1Input.value) : acceleration = 0.75;
+        //     param1Input.setAttribute("min", "0");
+        //     param1Input.setAttribute("max", "1");
+        //     param1Input.setAttribute("step", "0.05");
+        //     param1Input.setAttribute("value", acceleration);
 
-            param2Label.style.display = "";
-            param2Label.innerHTML = "Friction (0-1): ";
+        //     param2Label.style.display = "";
+        //     param2Label.innerHTML = "Friction (0-1): ";
 
-            param2Input.style.display = "";
-            (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? friction = parseFloat(param2Input.value) : friction = 0.95;
-            param2Input.setAttribute("min", "0");
-            param2Input.setAttribute("max", "1");
-            param2Input.setAttribute("step", "0.05");
-            param2Input.setAttribute("value", friction);
-        } else {
-            param1Label.innerHTML = "Step: ";
+        //     param2Input.style.display = "";
+        //     (0 <= parseFloat(param1Input.value) && parseFloat(param1Input.value) <= 1) ? friction = parseFloat(param2Input.value) : friction = 0.95;
+        //     param2Input.setAttribute("min", "0");
+        //     param2Input.setAttribute("max", "1");
+        //     param2Input.setAttribute("step", "0.05");
+        //     param2Input.setAttribute("value", friction);
+        // } else {
+        //     param1Label.innerHTML = "Step: ";
 
-            step = parseFloat(param1Input.value);
-            param1Input.setAttribute("min", "");
-            param1Input.setAttribute("max", "");
-            param1Input.setAttribute("value", step);
+        //     step = parseFloat(param1Input.value);
+        //     param1Input.setAttribute("min", "");
+        //     param1Input.setAttribute("max", "");
+        //     param1Input.setAttribute("value", step);
 
-            param2Label.style.display = "none";
+        //     param2Label.style.display = "none";
 
-            param2Input.style.display = "none";
-        }
+        //     param2Input.style.display = "none";
+        // }
     }
 
     document.addEventListener("keydown", (e) => {
@@ -133,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (collisionState === undefined) {
             if (isGravityBased) {
-                vy += (gravity);
+                vy += gravity;
 
                 if (keys.a) vx -= acceleration;
                 if (keys.d) vx += acceleration;
@@ -163,14 +163,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (keys.d) left += step;
             }
         } else {
+            console.log(collisionState)
+
             if (collisionState[0] === true) {
                 // Add top moving logic
                 console.log("Collision top");
                 if (0 < vy) vy = 0;
-                if (keys.space) vy -= jumpForce;
 
-                if (keys.a) vx -= acceleration;
-                if (keys.d) vx += acceleration;
+                if (keys.space) vy -= jumpForce;
 
                 vx *= friction;
 
@@ -182,25 +182,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 // Add right moving logic
                 console.log("Collision right");
             }
-            
+
             if (collisionState[2] === true) {
                 // Add bottom moving logic                
                 console.log("Collision bottom");
                 if (vy < 0) vy = 0;
-
-                if (keys.a) vx -= acceleration;
-                if (keys.d) vx += acceleration;
+                if (0 <= vy) vy += gravity;
+                console.log('vy:', vy)
 
                 vx *= friction;
 
                 top += vy;
                 left += vx;
             }
-            
+
             if (collisionState[3] === true) {
                 // Add left moving logic
                 console.log("Collision left");
             }
+
+            if (keys.a) vx -= acceleration;
+            if (keys.d) vx += acceleration;
         }
 
     }
@@ -235,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
                 &&
                 (bottom <= platformTop)
-                &&                
+                &&
                 (platformTop <= bottom + vy + gravity)
                 &&
                 isGravityBased
@@ -269,9 +271,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (
                 (platformLeft < (left + right) / 2 && (left + right) / 2 < platformRight)
                 &&
-                (platformBottom <= top)
+                (platformBottom < top)
                 &&
-                (top + vy <= platformBottom)
+                (top + vy < platformBottom)
                 &&
                 isGravityBased
             ) {
