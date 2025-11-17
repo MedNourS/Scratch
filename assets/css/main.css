@@ -1,10 +1,29 @@
+body {
+    overflow: hidden;
+}
+
 .movable {
     position: absolute;
     top: 100px;
     left: 100px;
 }
 
-.platform {
+.platform-top {
     position: absolute;
-    border: 1px black solid;
+    border-top: 1px black solid;
+}
+
+.platform-right {
+    position: absolute;
+    border-right: 1px black solid;
+}
+
+.platform-bottom {
+    position: absolute;
+    border-bottom: 1px black solid;
+}
+
+.platform-left {
+    position: absolute;
+    border-left: 1px black solid;
 }
